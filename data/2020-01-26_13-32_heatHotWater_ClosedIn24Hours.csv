@@ -1,0 +1,5 @@
+development_name,building_number,address,interruptions,planned,reported_datetime,restoration_hours,buildings,units,population
+DOUGLASS ADDITION,18,"868 AMSTERDAM AVENUE NEW YORK, NY 10025","Heat, Hot Water","Unplanned, Unplanned",2020-01-25 10:53:00,5,1,135,337
+FARRAGUT,10,"190 YORK STREET BROOKLYN, NY 11201",Water,Unplanned,2020-01-24 07:33:00,24,1,140,297
+LOWER EAST SIDE II,3,"620 EAST 5TH STREET NEW YORK, NY 10009",Heat,Unplanned,2020-01-24 13:30:00,11,1,42,108
+SACKWERN,5,"710 NOBLE AVENUE BRONX, NY 10473",Hot Water,Unplanned,2020-01-24 13:45:00,29,1,59,103
