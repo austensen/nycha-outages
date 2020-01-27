@@ -223,7 +223,7 @@ def parse_gas_cols(cols):
     bldg = None
     interruptions = 'Gas'
     planned = None
-    reported_on = parse_date(cols[3])
+    reported_scheduled = parse_date(cols[3])
     restoration_time = None
     status, gas_restored_on = parse_status_restored_gas(cols[4])
     bldgs, units, pop = [None, None, None]
@@ -236,7 +236,7 @@ def parse_gas_cols(cols):
         'gas_lines': gas_lines,
         'interruptions': interruptions,
         'planned': planned,
-        'reported_on': reported_on,
+        'reported_scheduled': reported_scheduled,
         'gas_restored_on': gas_restored_on,
         'restoration_time': restoration_time,
         'status': status,
