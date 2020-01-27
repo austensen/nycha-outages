@@ -6,7 +6,7 @@ NYCHA regularly updates a [web page](https://my.nycha.info/Outages/Outages.aspx)
 
 This web scraper is set up on [morph.io](morph.io) to run once a day and update a SQLite database that is publicly available for download and accessible via API. 
 
-[NYCHA Outage on morph.io](https://morph.io/austensen/nycha-outages)
+[NYCHA Outages on morph.io](https://morph.io/austensen/nycha-outages)
 
 
 ## Running the scraper locally
