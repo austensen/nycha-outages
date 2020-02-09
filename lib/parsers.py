@@ -95,7 +95,7 @@ def parse_status(cell):
     return status
 
 def parse_status_restored_gas(cell):
-    """ Parse 'Est. Completion' column into status and reported_on """
+    """ Parse 'Est. Completion' column into status and gas_restored_on """
     text = cell.text.strip()
     match = re.search(r'\d{1,2}/\d{1,2}\d{4}', text)
     if match:
