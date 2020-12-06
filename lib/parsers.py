@@ -124,10 +124,10 @@ def parse_restored_cols(cols):
     gas_restored_on = None
     interruptions = parse_interuption(cols[1])
     planned = parse_planned(cols[2])
-    reported_scheduled = parse_datetime(cols[3])
-    restoration_time = parse_restoration(cols[4])
+    reported_scheduled = None
+    restoration_time = parse_restoration(cols[3])
     status = 'Restored'
-    bldgs, units, pop = parse_impact_parts(cols[5])
+    bldgs, units, pop = parse_impact_parts(cols[4])
     imported_on = datetime.datetime.now(pytz.timezone('America/New_York'))
 
     data = {
@@ -257,10 +257,24 @@ PARSE_COL_FUNCTIONS = {
 def scrape_outages(soup, service_type, service_status = ''):
 
     # Depending on table to be parsed, set the table ID and parsing function
-    table_id = 'ctl00_ContentPlaceHolder1_' + service_type + 'OutagesList_grvOutages' + service_status
-    parse_cols = PARSE_COL_FUNCTIONS[service_status] if service_type != 'gas' else parse_gas_cols
+    if service_type == 'gas':
+        div_id = 'ctl00_ContentPlaceHolder1_gasOutagesList_panData'
+        table_id = 'ctl00_ContentPlaceHolder1_gasOutagesList_grvOutages'
+        parse_cols = parse_gas_cols
+    else:
+        if service_status == 'ClosedIn24Hours':
+            div_id = 'ctl00_ContentPlaceHolder1_' + service_type + 'OutagesList_panOutages' + service_status
+            table_id = 'grvOutages' + service_status
+        if service_status == 'Planned':
+            div_id = 'ctl00_ContentPlaceHolder1_' + service_type + 'OutagesList_pan' + service_status + 'Outages'
+            table_id = 'grv' + service_status + 'Outages'
+        if service_status == 'Open':
+            div_id = 'ctl00_ContentPlaceHolder1_' + service_type + 'OutagesList_pan' + service_status + 'Outages'
+            table_id = 'grvOutages' + service_status
+        parse_cols = PARSE_COL_FUNCTIONS[service_status]
 
-    table = soup.find(id=table_id)
+    table_div = soup.find(id=div_id)
+    table = table_div.find(id=table_id)
 
     # If there is nothing to report the table doesn't exist, so skip
     if not table:
@@ -279,3 +293,4 @@ def scrape_outages(soup, service_type, service_status = ''):
 
         pk_cols = ['development_name', 'address', 'interruptions', 'status', 'reported_scheduled']
         scraperwiki.sqlite.save(unique_keys=pk_cols, data=data)
+        print('test')

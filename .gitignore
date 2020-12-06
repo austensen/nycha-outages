@@ -1,5 +1,5 @@
 __pycache__/
-.idea/
+.vscode
 .env
 venv/
 .DS_Store
@@ -7,3 +7,4 @@ testing.py
 data.sqlite
 *.pyc
 tests/
+todo.txt
