@@ -44,14 +44,15 @@ def parse_address_parts_gas(cell):
 
 def parse_interuption(cell):
     """ Parse table cell for 'Interruption' into comma-separated string of values """
-    probs = cell.find_all('span', attrs={'style': 'padding-bottom:5px; display:block; '})
+    probs = cell.find_all('span', attrs={'style': 'padding-bottom: 5px; display: block;'})
+    # probs = probs.find_all
     probs = ', '.join([prob.text.strip() for prob in probs])
 
     return probs
 
 def parse_planned(cell):
     """ Parse table cell for 'Planned' into comma-separated string of values """
-    plans = cell.find_all('span', attrs={'style':'padding-bottom:5px; display:block; '})
+    plans = cell.find_all('span', attrs={'style':'padding-bottom: 5px; display: block;'})
     plans = ', '.join([plan.text.strip() for plan in plans])
 
     return plans
@@ -293,4 +294,3 @@ def scrape_outages(soup, service_type, service_status = ''):
 
         pk_cols = ['development_name', 'address', 'interruptions', 'status', 'reported_scheduled']
         scraperwiki.sqlite.save(unique_keys=pk_cols, data=data)
-        print('test')
