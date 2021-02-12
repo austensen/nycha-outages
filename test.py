@@ -27,10 +27,10 @@ def parse_history_cols(cols):
         'development_name': dev,
         'building_number': bldg,
         'address': addr,
-        'gas_lines': gas_lines,
+        'gas_lines': gas_lines, # can we delete this since it's None?
         'interruptions': interruptions,
         'planned': planned,
-        'gas_restored_on': gas_restored_on,
+        'gas_restored_on': gas_restored_on, # can we delete this since it's None?
         'reported_scheduled': reported_scheduled,
         'restoration_time': restoration_time,
         'status': status,
