@@ -66,7 +66,6 @@ for row in rows:
     # write row to a csv
     import csv
     with open('nycha_history', mode='w') as csv_file:
-    writer = csv.DictWriter(csv_file, data.keys())
-
-    writer.writeheader()
-    writer.writerow(data)
+        writer = csv.DictWriter(csv_file, data.keys())
+        writer.writeheader()
+        writer.writerow(data)
