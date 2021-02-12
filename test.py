@@ -64,3 +64,9 @@ for row in rows:
     data = parse_cols(cols)
 
     # write row to a csv
+    import csv
+    with open('nycha_history', mode='w') as csv_file:
+    writer = csv.DictWriter(csv_file, data.keys())
+
+    writer.writeheader()
+    writer.writerow(data)
