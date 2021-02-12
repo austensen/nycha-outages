@@ -48,9 +48,6 @@ table_id = 'grvHistoricalOutages'
 table_div = soup.find(id=div_id)
 table = table_div.find(id=table_id)
 
-# If there is nothing to report the table doesn't exist, so skip
-if not table:
-    return
 
 rows = table.find_all('tr', recursive=False)
 
