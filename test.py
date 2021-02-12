@@ -10,7 +10,7 @@ content = page.content
 soup = BeautifulSoup(content, 'html.parser')
 
 
-def parse_restored_cols(cols):
+def parse_history_cols(cols):
 
     dev, bldg, addr = parse_address_parts(cols[0])
     gas_lines = None
@@ -24,8 +24,8 @@ def parse_restored_cols(cols):
     imported_on = datetime.datetime.now(pytz.timezone('America/New_York'))
 
     data = {
-        'development_name': dev, 
-        'building_number': bldg, 
+        'development_name': dev,
+        'building_number': bldg,
         'address': addr,
         'gas_lines': gas_lines,
         'interruptions': interruptions,
@@ -34,8 +34,8 @@ def parse_restored_cols(cols):
         'reported_scheduled': reported_scheduled,
         'restoration_time': restoration_time,
         'status': status,
-        'buildings_impacted': bldgs, 
-        'units_impacted': units, 
+        'buildings_impacted': bldgs,
+        'units_impacted': units,
         'population_impacted': pop,
         'imported_on': imported_on
     }
