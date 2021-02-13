@@ -77,15 +77,15 @@ def parse_impact_parts(cell):
 import pytz
 def parse_history_cols(cols):
 
-    dev, bldg, addr = parse_address_parts(cols[0]) # this column is the same in the history tab
-    gas_lines = None # this column does not exist in history tab
-    gas_restored_on = None # this column does not exist in history tab
-    interruptions = parse_interuption(cols[1]) # this column is the same in the history tab
-    planned = parse_planned(cols[2]) # this column is the same in the history tab
-    reported_date = parse_datetime(cols[3]) # added this as a col b/c I think we'll want to know when it was reported
-    restored_date = parse_datetime(cols[4]) # changed from 3 to 4
-    status = 'Restored' # kept the same b/c history == it's been restored
-    bldgs, units, pop = parse_impact_parts(cols[5]) # this column is the same in the history tab
+    dev, bldg, addr = parse_address_parts(cols[0])
+    gas_lines = None
+    gas_restored_on = None
+    interruptions = parse_interuption(cols[1])
+    planned = parse_planned(cols[2])
+    reported_date = parse_datetime(cols[3])
+    restored_date = parse_datetime(cols[4])
+    status = 'Restored' # history == it's been restored
+    bldgs, units, pop = parse_impact_parts(cols[5])
     imported_on = datetime.datetime.now(pytz.timezone('America/New_York'))
 
     data = {
