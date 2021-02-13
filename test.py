@@ -78,8 +78,6 @@ import pytz
 def parse_history_cols(cols):
 
     dev, bldg, addr = parse_address_parts(cols[0])
-    gas_lines = None
-    gas_restored_on = None
     interruptions = parse_interuption(cols[1])
     planned = parse_planned(cols[2])
     reported_date = parse_datetime(cols[3])
