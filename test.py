@@ -14,6 +14,8 @@ soup = BeautifulSoup(content, 'html.parser')
 # because these were all related to the gas table.
 # deleted parse_status because it was an extra definition and history tab
 # should only have things that are restore.
+# deleted parse_restoration because the history tab has a date/time end date
+# rather than an integer for restoration hours
 
 import re
 import datetime
@@ -65,13 +67,6 @@ def parse_text(cell):
     """ Parse table cell and return just the text """
     return cell.text.strip()
 
-def parse_restoration(cell):
-    """ Parse table cell for 'Restoration Time' into integer """
-    m = re.search(r'(\d+) Hours', cell.text)
-    restore_hours = int(m.group(1).replace(',', '')) if m else None
-
-    return restore_hours
-
 def parse_impact_parts(cell):
     """ Parse table cell for 'Impact' into buildings, units, and population """
     bldgs, units, pop = [int(x.text.strip().replace(',', '')) for x in cell.find_all('td')]
@@ -87,8 +82,8 @@ def parse_history_cols(cols):
     gas_restored_on = None # this column does not exist in history tab
     interruptions = parse_interuption(cols[1]) # this column is the same in the history tab
     planned = parse_planned(cols[2]) # this column is the same in the history tab
-    reported_scheduled = parse_datetime(cols[3]) # added this as a col b/c I think we'll want to know when it was reported
-    restoration_time = parse_restoration(cols[4]) # changed from 3 to 4
+    reported_date = parse_datetime(cols[3]) # added this as a col b/c I think we'll want to know when it was reported
+    restored_date = parse_datetime(cols[4]) # changed from 3 to 4
     status = 'Restored' # kept the same b/c history == it's been restored
     bldgs, units, pop = parse_impact_parts(cols[5]) # this column is the same in the history tab
     imported_on = datetime.datetime.now(pytz.timezone('America/New_York'))
