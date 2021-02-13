@@ -53,9 +53,10 @@ def parse_planned(cell):
     return plans
 
 def parse_datetime(cell):
-    """ Parse table cell for 'Reported On' or 'Scheduled Date' into datetime object """
+    """ Parse table cell for 'Report Date' or 'End Date' into datetime object """
+    # had to change from %Y to %y because history tab has two digit years
     report_str = re.sub(r'[\s\r\n]+', ' ', cell.text).strip()
-    report_datetime = datetime.datetime.strptime(report_str, '%m/%d/%Y %I:%M %p')
+    report_datetime = datetime.datetime.strptime(report_str, '%m/%d/%y %I:%M %p')
 
     return report_datetime
 
