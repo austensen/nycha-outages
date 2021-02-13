@@ -58,7 +58,7 @@ for row in rows:
     if not cols:
         continue
 
-    data = parse_cols(cols)
+    data = parse_history_cols(cols)
 
     # write row to a csv
     import csv
