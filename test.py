@@ -15,6 +15,9 @@ soup = BeautifulSoup(content, 'html.parser')
 # deleted parse_status because it was an extra definition and history tab
 # should only have things that are restore.
 
+import re
+import datetime
+
 def parse_address_parts(cell):
     """ Parse table cell for 'Address' into development name, building number, and address """
     # The development and building part is in a div so start there
@@ -75,6 +78,8 @@ def parse_impact_parts(cell):
 
     return [bldgs, units, pop]
 
+# make parse_history_cols
+import pytz
 def parse_history_cols(cols):
 
     dev, bldg, addr = parse_address_parts(cols[0]) # this column is the same in the history tab
