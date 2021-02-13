@@ -81,8 +81,8 @@ def parse_history_cols(cols):
     dev, bldg, addr = parse_address_parts(cols[0])
     interruptions = parse_interuption(cols[1])
     planned = parse_planned(cols[2])
-    reported_date = parse_datetime(cols[3])
-    restored_date = parse_datetime(cols[4])
+    report_date = parse_datetime(cols[3])
+    end_date = parse_datetime(cols[4])
     status = 'Restored' # history == it's been restored
     bldgs, units, pop = parse_impact_parts(cols[5])
     imported_on = datetime.datetime.now(pytz.timezone('America/New_York'))
@@ -91,12 +91,10 @@ def parse_history_cols(cols):
         'development_name': dev,
         'building_number': bldg,
         'address': addr,
-        'gas_lines': gas_lines, # can we delete this since it's None?
         'interruptions': interruptions,
         'planned': planned,
-        'gas_restored_on': gas_restored_on, # can we delete this since it's None?
-        'reported_scheduled': reported_scheduled,
-        'restoration_time': restoration_time,
+        'report_date': report_date,
+        'end_date': end_date,
         'status': status,
         'buildings_impacted': bldgs,
         'units_impacted': units,
