@@ -42,8 +42,7 @@ def parse_history_cols(cols):
 
     return data
 
-
-div_id = 'ct100_ContentPlaceHolder1_historicalOutagesList_UpdatePanel1'
+div_id = 'ctl00_ContentPlaceHolder1_historicalOutagesList_UpdatePanel1'
 table_id = 'grvHistoricalOutages'
 table_div = soup.find(id=div_id)
 table = table_div.find(id=table_id)
