@@ -1,6 +1,7 @@
 import requests
 import os
 from bs4 import BeautifulSoup
+import csv
 
 from lib.parsers import scrape_outages
 
@@ -19,6 +20,10 @@ soup = BeautifulSoup(content, 'html.parser')
 
 import re
 import datetime
+
+# replace any sequence of whitespace (spaces, tabs, newlines, etc.) with a sinclge space
+def squish_whitespace(x):
+    return ' '.join(x.split())
 
 def parse_address_parts(cell):
     """ Parse table cell for 'Address' into development name, building number, and address """
@@ -42,6 +47,7 @@ def parse_interuption(cell):
     probs = cell.find_all('span', attrs={'style': 'padding-bottom: 5px; display: block;'})
     # probs = probs.find_all
     probs = ', '.join([prob.text.strip() for prob in probs])
+    probs = squish_whitespace(probs)
 
     return probs
 
@@ -49,6 +55,7 @@ def parse_planned(cell):
     """ Parse table cell for 'Planned' into comma-separated string of values """
     plans = cell.find_all('span', attrs={'style':'padding-bottom: 5px; display: block;'})
     plans = ', '.join([plan.text.strip() for plan in plans])
+    plans = squish_whitespace(plans)
 
     return plans
 
@@ -112,6 +119,20 @@ table = table_div.find(id=table_id)
 
 rows = table.find_all('tr', recursive=False)
 
+# delete output file before writing all the data
+if os.path.exists('nycha_history.csv'):
+    os.remove('nycha_history.csv')
+
+# create the output file and write the column names
+with open('nycha_history.csv', mode='w') as csv_file:
+    row_names = [
+        'development_name', 'building_number', 'address', 'interruptions', 
+        'planned', 'report_date', 'end_date', 'status', 'buildings_impacted', 
+        'units_impacted', 'population_impacted', 'imported_on'
+    ]
+    writer = csv.DictWriter(csv_file, row_names)
+    writer.writeheader()
+
 for row in rows:
     cols = row.find_all('td', recursive=False)
 
@@ -121,9 +142,7 @@ for row in rows:
 
     data = parse_history_cols(cols)
 
-    # write row to a csv
-    import csv
-    with open('nycha_history', mode='w') as csv_file:
+    # open the existing file in append-mode, add a line of data (without headers)
+    with open('nycha_history.csv', mode='a') as csv_file:
         writer = csv.DictWriter(csv_file, data.keys())
-        writer.writeheader()
         writer.writerow(data)
