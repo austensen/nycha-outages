@@ -1,23 +1,43 @@
+import os 
 import csv
 import re
 import datetime
 import pytz
 import scraperwiki
 
+
+# replace any sequence of whitespace (spaces, tabs, newlines, etc.) with a sinclge space
+def squish_whitespace(x):
+    return ' '.join(x.split())
+
+# empty string raises error for int(), so this avoid it
+def mk_int(s):
+    s = s.strip()
+    return int(s) if s else None
+
+# in some cases if there are multiple buildings in a development that are
+# affected by an outage, they will have a row for the development and some
+# details about the outage followed by row(s) for the buildings and the impact
+# details. when this happens they have the word "Sectional" in the first
+# "header" row, but it's actually a span tag and they just toggle the display
+# attribute
+def is_nested_header(cell):
+    return any([re.search('Sectional', x.text) for x in cell.select("span[style='display: block;']")])
+
 def parse_address_parts(cell):
     """ Parse table cell for 'Address' into development name, building number, and address """
     # The development and building part is in a div so start there
     dev_bldg_div = cell.find('div')
 
-    dev = re.sub('(- Building|- Entire Development).*', '', dev_bldg_div.text).strip()
+    dev = re.sub('((- Building)|(- Entire Development)).*', '', dev_bldg_div.text).strip()
 
     m = re.search(r'Building (\d+)', dev_bldg_div.text)
-    bldg_num = int(m.group(1).replace(',', '')) if m else None
+    bldg_num = mk_int(m.group(1).replace(',', '')) if m else None
 
     # Remove the div before extracting the address
     dev_bldg_div.extract()
 
-    address = re.sub(r'[\r\n\s]+', ' ', cell.text).strip()
+    address = squish_whitespace(cell.text.replace('Sectional', '').strip())
 
     return dev, bldg_num, address
 
@@ -47,6 +67,7 @@ def parse_interuption(cell):
     probs = cell.find_all('span', attrs={'style': 'padding-bottom: 5px; display: block;'})
     # probs = probs.find_all
     probs = ', '.join([prob.text.strip() for prob in probs])
+    probs = squish_whitespace(probs)
 
     return probs
 
@@ -54,20 +75,21 @@ def parse_planned(cell):
     """ Parse table cell for 'Planned' into comma-separated string of values """
     plans = cell.find_all('span', attrs={'style':'padding-bottom: 5px; display: block;'})
     plans = ', '.join([plan.text.strip() for plan in plans])
+    plans = squish_whitespace(plans)
 
     return plans
 
-def parse_datetime(cell):
+def parse_datetime(cell, strp_format='%m/%d/%Y %I:%M %p'):
     """ Parse table cell for 'Reported On' or 'Scheduled Date' into datetime object """
     report_str = re.sub(r'[\s\r\n]+', ' ', cell.text).strip()
-    report_datetime = datetime.datetime.strptime(report_str, '%m/%d/%Y %I:%M %p')
+    report_datetime = datetime.datetime.strptime(report_str, strp_format)
 
     return report_datetime
 
-def parse_date(cell):
+def parse_date(cell, strp_format='%m/%d/%Y'):
     """ Parse table cell with 'mm/dd/yyy' into datetime object """
     report_str = re.sub(r'[\s\r\n]+', ' ', cell.text).strip()
-    report_date = datetime.datetime.strptime(report_str, '%m/%d/%Y')
+    report_date = datetime.datetime.strptime(report_str, strp_format)
 
     return report_date
 
@@ -82,7 +104,7 @@ def parse_text(cell):
 def parse_restoration(cell):
     """ Parse table cell for 'Restoration Time' into integer """
     m = re.search(r'(\d+) Hours', cell.text)
-    restore_hours = int(m.group(1).replace(',', '')) if m else None
+    restore_hours = mk_int(m.group(1).replace(',', ''))
 
     return restore_hours
 
@@ -112,7 +134,7 @@ def parse_status_restored_gas(cell):
 
 def parse_impact_parts(cell):
     """ Parse table cell for 'Impact' into buildings, units, and population """
-    bldgs, units, pop = [int(x.text.strip().replace(',', '')) for x in cell.find_all('td')]
+    bldgs, units, pop = [mk_int(x.text.strip().replace(',', '')) for x in cell.find_all('td')]
 
     return [bldgs, units, pop]
 
@@ -254,6 +276,37 @@ PARSE_COL_FUNCTIONS = {
     'Planned': parse_planned_cols,
     'ClosedIn24Hours': parse_restored_cols
 }
+
+
+def parse_history_cols(cols, defaults=None):
+
+    dev, bldg, addr = parse_address_parts(cols[0])
+    interruptions = parse_interuption(cols[1])
+    planned = parse_planned(cols[2])
+    report_date = parse_datetime(cols[3], '%m/%d/%y %I:%M %p')
+    end_date = parse_datetime(cols[4], '%m/%d/%y %I:%M %p')
+    outage_duration = end_date - report_date
+    bldgs, units, pop = parse_impact_parts(cols[5])
+    imported_on = datetime.datetime.now(pytz.timezone('America/New_York'))
+
+    data = {
+        'development_name': dev,
+        'building_number': bldg,
+        'address': addr,
+        'interruptions': interruptions,
+        'planned': planned,
+        'report_date': report_date,
+        'end_date': end_date,
+        'outage_duration': outage_duration,
+        'buildings_impacted': bldgs,
+        'units_impacted': units,
+        'population_impacted': pop,
+        'imported_on': imported_on
+    }
+
+    return data
+
+
 
 def scrape_outages(soup, service_type, service_status = ''):
 

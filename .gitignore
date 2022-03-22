@@ -8,3 +8,6 @@ data.sqlite
 *.pyc
 tests/
 todo.txt
+geckodriver.log
+/data
+filter-results.R
