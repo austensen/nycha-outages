@@ -56,7 +56,7 @@ class History:
         self.choose_dates()
 
         print('searching history...')
-        self.driver.find_element_by_css_selector('input.blackbutton').click()
+        self.driver.find_element(By.CSS_SELECTOR, 'input.blackbutton').click()
 
         self.wait.until(EC.visibility_of_element_located((By.ID, 'grvHistoricalOutages')))
 
@@ -66,7 +66,7 @@ class History:
         while not done:
             time.sleep(randint(2, 5))
 
-            page_info = self.driver.find_element_by_css_selector('span#ctl00_ContentPlaceHolder1_historicalOutagesList_currentPageInfo.current_page_info').text
+            page_info = self.driver.find_element(By.CSS_SELECTOR, 'span#ctl00_ContentPlaceHolder1_historicalOutagesList_currentPageInfo.current_page_info').text
             print('scraping pages: ' + page_info, end='\r', flush=True)
             
             soup = BeautifulSoup(self.driver.page_source, 'lxml')
@@ -76,7 +76,7 @@ class History:
                 f.write(str(history_table) + '\n')
 
             if self.check_exists_by_css_selector('a#ctl00_ContentPlaceHolder1_historicalOutagesList_btnNext.link_buttons'):
-                self.driver.find_element_by_css_selector('a#ctl00_ContentPlaceHolder1_historicalOutagesList_btnNext.link_buttons').click()
+                self.driver.find_element(By.CSS_SELECTOR, 'a#ctl00_ContentPlaceHolder1_historicalOutagesList_btnNext.link_buttons').click()
             else:
                 done = True
 
@@ -97,7 +97,7 @@ class History:
 
             if date is not None:
                 date_ = dateparser.parse(eval(date)).strftime('%m/%d/%Y')
-                element = self.driver.find_element_by_id(date_str)
+                element = self.driver.find_element(By.ID, date_str)
                 element.clear()
                 element.send_keys(date_)
             else:
@@ -105,7 +105,7 @@ class History:
 
     def check_exists_by_css_selector(self, css_selector):
         try:
-            self.driver.find_element_by_css_selector(css_selector)
+            self.driver.find_element(By.CSS_SELECTOR, css_selector)
         except NoSuchElementException:
             return False
         return True
